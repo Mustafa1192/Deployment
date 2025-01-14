@@ -15,8 +15,18 @@ const PORT = 5000;
 // const MONGODB_URI ='mongodb+srv://mustafakhan31499:cNG8NPtbhNaY5ieh@cluster1.cye9d.mongodb.net/Canteen_app?retryWrites=true&w=majority&appName=Cluster1';
 const MONGODB_URI = 'mongodb+srv://bscitoriginals:originals@cluster0.jw5h8.mongodb.net/Originals?retryWrites=true&w=majority&appName=Cluster0';
 // Middleware
-app.use(cors());
+// Include CORS Middleware
+app.use(cors({
+  origin: 'https://deployment-ashen-eight.vercel.app/',  // Frontend URL that will access the backend API
+  methods: 'GET, POST, PUT, DELETE',        // List of methods you want to allow from the client
+  allowedHeaders: 'Content-Type, Authorization', // Headers you allow in requests
+  credentials: true,  // If you use cookies or other authentication headers
+}));
+
+// Other middlewares (e.g., bodyParser, logging, etc.)
 app.use(bodyParser.json());
+
+// app.use(bodyParser.json());
 
 // Connect to MongoDB
 mongoose.connect(MONGODB_URI, {

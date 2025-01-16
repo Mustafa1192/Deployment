@@ -19,7 +19,7 @@ function UnitDetail() {
   useEffect(() => {
     const fetchSyllabusData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/syllabus');
+        const response = await fetch('https://deployment-2-99do.onrender.com/syllabus');
         const data = await response.json();
         setSyllabusData(data);
       } catch (error) {

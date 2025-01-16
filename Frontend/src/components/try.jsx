@@ -11,7 +11,7 @@ function Member() {
   // Function to fetch questions based on unit
   const fetchQuestions = async (unit) => {
     try {
-      const response = await fetch(`http://localhost:5000/unit-${unit}-questions`); // Fetch unit-specific questions
+      const response = await fetch(`https://deployment-2-99do.onrender.com/unit-${unit}-questions`); // Fetch unit-specific questions
       if (!response.ok) {
         throw new Error("Failed to fetch questions");
       }

@@ -48,7 +48,7 @@ const RegistrationForm = () => {
         setError(''); // Clear errors before further processing
     
         try {
-            const response = await fetch('http://localhost:5000/send-otp', {
+            const response = await fetch('https://deployment-2-99do.onrender.com/send-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: name, email }),

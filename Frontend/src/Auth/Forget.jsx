@@ -45,7 +45,7 @@ function ForgetPassword() {
 
     const handleResend = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/forgot-password', { email: formData.email });
+            const response = await axios.post('https://deployment-2-99do.onrender.com/forgot-password', { email: formData.email });
             setMessageType('success');
             setMessage('OTP resent. Please check your email.');
             setResendTimer(60);
@@ -87,7 +87,7 @@ function ForgetPassword() {
                 return;
             }
             try {
-                const response = await axios.post('http://localhost:5000/reset-password', {
+                const response = await axios.post('https://deployment-2-99do.onrender.com/reset-password', {
                     email: formData.email,
                     otp: formData.otp,
                     newPassword: formData.newPassword

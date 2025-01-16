@@ -1,4 +1,4 @@
-// // ///////////////////////////////////// Complete Backend with all requirements ////////////////////////////////////////////////////////////
+// Complete Backend with all requirements
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -6,14 +6,16 @@ const cors = require('cors');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto'); // To generate OTP
 const bcrypt = require('bcrypt'); // To hash passwords
-const path = require('path');
+
+// Load environment variables
+require('dotenv').config();
+
 const syllabus = require('./modules/syllabus.json');
 
 const app = express();
-const PORT = 5000;
-// const MONGODB_URI = 'mongodb+srv://onemenuit:zW2OhyjeFcXgDGu0@cluster0.p6bpt.mongodb.net/OneMenu_App?retryWrites=true&w=majority';
-// const MONGODB_URI ='mongodb+srv://mustafakhan31499:cNG8NPtbhNaY5ieh@cluster1.cye9d.mongodb.net/Canteen_app?retryWrites=true&w=majority&appName=Cluster1';
-const MONGODB_URI = 'mongodb+srv://bscitoriginals:originals@cluster0.jw5h8.mongodb.net/Originals?retryWrites=true&w=majority&appName=Cluster0';
+const PORT = process.env.PORT || 5000;
+const MONGODB_URI = process.env.MONGODB_URI;
+
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
@@ -25,10 +27,6 @@ mongoose.connect(MONGODB_URI, {
 })
   .then(() => console.log('MongoDB connected successfully 🚀'))
   .catch((error) => console.error('Error connecting to MongoDB:', error));
-
-  app.get('/syllabus', (req, res) => {
-    res.json(syllabus); // Serve the content from the syllabus.json file
-  });
   
 // Define Schema and Model for 'sixbida' collection
 const QuestionSchema = new mongoose.Schema({
@@ -136,14 +134,24 @@ const tempUserSchema = new mongoose.Schema({
 
 const TempUser = mongoose.model('TempUser', tempUserSchema);
 
+// // Nodemailer configuration
+// const transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//     user: 'onemenu.it@gmail.com',
+//     pass: 'euwo vymq gdxb jsmf'
+//   }
+// });
 // Nodemailer configuration
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'onemenu.it@gmail.com',
-    pass: 'euwo vymq gdxb jsmf'
-  }
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
 });
+
 
 // Route to handle OTP generation (Step 1)
 app.post('/send-otp', async (req, res) => {

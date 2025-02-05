@@ -277,7 +277,9 @@ app.post('/resend-otp', async (req, res) => {
 
     // Send OTP via email
     const mailOptions = {
-      from: 'onemenu.it@gmail.com',  // Replace with your actual email
+      // from: 'onemenu.it@gmail.com',  // Replace with your actual email
+      from: process.env.EMAIL_USER,
+  // Replace with your actual email
       to: email,
       subject: 'Complete Your Registration with Bsc IT Originals Notes',
       text: `Hi ${username},

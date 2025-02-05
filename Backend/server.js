@@ -145,78 +145,53 @@ const TempUser = mongoose.model('TempUser', tempUserSchema);
 // Nodemailer configuration
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.EMAIL_USER, // Ensure this is set in Render
+    pass: process.env.EMAIL_PASS, // Use App Password, NOT Gmail password
   },
 });
 
-
-// Route to handle OTP generation (Step 1)
-app.post('/send-otp', async (req, res) => {
+app.post("/send-otp", async (req, res) => {
   const { username, email } = req.body;
 
   try {
-    // Check if user already exists in Main User collection
+    // Check if user already exists
     const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists!' });
-    }
-    
+    if (existingUser) return res.status(400).json({ message: "User already exists!" });
+
     // Check if username already exists
     const existingUsername = await User.findOne({ username });
-    if (existingUsername) {
-      return res.status(400).json({ message: 'Username is already taken!' });
-    }
+    if (existingUsername) return res.status(400).json({ message: "Username is already taken!" });
 
-    // Check for existing TempUser
-    let tempUser = await TempUser.findOne({ email });
-
-    // Generate new OTP
+    // Generate OTP
     const otp = crypto.randomInt(100000, 999999).toString();
+    let tempUser = await TempUser.findOne({ email });
 
     if (tempUser) {
       tempUser.otp = otp;
-      tempUser.otpExpires = Date.now() + 60000; // 1-minute expiry
+      tempUser.otpExpires = Date.now() + 60000;
       await tempUser.save();
     } else {
       tempUser = new TempUser({ username, email, otp, otpExpires: Date.now() + 60000 });
       await tempUser.save();
     }
 
-    // Send OTP via email
+    // Send OTP email
     const mailOptions = {
-      from: 'onemenu.it@gmail.com',  // Replace with your actual email
+      from: process.env.EMAIL_USER, // Should match your email
       to: email,
-      subject: 'Complete Your Registration with Bsc IT Originals Notes',
-      text: `Hi ${username},
-    
-    Thanks for registering at Bsc IT Originals Notes!
-    
-    Your verification OTP is: **${otp}**. Please enter it within 60 seconds to complete your registration.
-    
-    If you did not make this request, simply ignore this email. Your account remains safe.
-    
-    For support or questions, contact us at: bscitoriginals@gmail.com
-    
-    Best regards,  
-    The Bsc IT Originals Notes Team
-    
-    ---
-    
-    This is an automated email. Please do not reply.`
+      subject: "Complete Your Registration with Bsc IT Originals Notes",
+      text: `Hi ${username},\n\nYour OTP is: ${otp}\n\nPlease enter it within 60 seconds.`,
     };
-    
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        return res.status(500).json({ message: 'Error sending OTP email!' });
-      }
-      res.status(200).json({ message: 'New OTP sent to your email!' });
-    });
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent:", info.response);
+
+    res.status(200).json({ message: "New OTP sent to your email!" });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error("Nodemailer Error:", error);
+    res.status(500).json({ message: "Error sending OTP email!" });
   }
 });
 

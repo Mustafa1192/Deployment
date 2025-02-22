@@ -144,26 +144,26 @@ const TempUser = mongoose.model('TempUser', tempUserSchema);
 // });
 // Nodemailer configuration
 
-// const transporter = nodemailer.createTransport({
-//   service: "gmail",
-//   auth: {
-//     user: process.env.EMAIL_USER, // Ensure this is set in Render
-//     pass: process.env.EMAIL_PASS, // Use App Password, NOT Gmail password
-//   },
-// });
-
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // Use TLS
+  service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false, // Bypass SSL issues
+    user: process.env.EMAIL_USER, // Ensure this is set in Render
+    pass: process.env.EMAIL_PASS, // Use App Password, NOT Gmail password
   },
 });
+
+// const transporter = nodemailer.createTransport({
+//   host: "smtp.gmail.com",
+//   port: 587,
+//   secure: false, // Use TLS
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+//   tls: {
+//     rejectUnauthorized: false, // Bypass SSL issues
+//   },
+// });
 
 app.post("/send-otp", async (req, res) => {
   const { username, email } = req.body;
